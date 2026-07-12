@@ -3647,6 +3647,7 @@ function calcs.offence(env, actor, activeSkill)
 
 		-- Calculate crit chance, crit multiplier, and their combined effect
 		local inevitableCrits = false
+		local canRerollCritChance = not skillModList:Flag(cfg, "CannotRerollCritChance")
 		if skillModList:Flag(cfg, "NeverCrit") then
 			output.PreEffectiveCritChance = 0
 			output.CritChance = 0
@@ -3728,16 +3729,16 @@ function calcs.offence(env, actor, activeSkill)
 					output.CritChance = output.CritChance * output.AccuracyHitChance / 100
 				end
 				local preLuckyCritChance = output.CritChance
-				if env.mode_effective and skillModList:Flag(cfg, "CritChanceLucky") then
+				if env.mode_effective and canRerollCritChance and skillModList:Flag(cfg, "CritChanceLucky") then
 					output.CritChance = (1 - (1 - output.CritChance / 100) ^ 2) * 100
 				end
 				output.PreBifurcateCritChance = output.CritChance
 				local preBifurcateCritChance = output.CritChance
-				if env.mode_effective and skillModList:Flag(cfg, "BifurcateCrit") then
+				if env.mode_effective and canRerollCritChance and skillModList:Flag(cfg, "BifurcateCrit") then
 					output.CritChance = (1 - (1 - output.CritChance / 100) ^ 2) * 100
 				end
 				local preInevitableCritChance = output.CritChance
-				if env.mode_effective and skillModList:Flag(cfg, "InevitableCriticalHits") and output.CritChance > 0 then
+				if env.mode_effective and canRerollCritChance and skillModList:Flag(cfg, "InevitableCriticalHits") and output.CritChance > 0 then
 					inevitableCrits = true
 					-- Lucky crits use their effective crit chance without an extra roll-down penalty.
 					-- Bifurcated crits roll twice per roll-down; only both rolls failing advances the penalty.
@@ -3789,12 +3790,12 @@ function calcs.offence(env, actor, activeSkill)
 						t_insert(breakdown.CritChance, s_format("x %.2f ^8(chance to hit)", output.AccuracyHitChance / 100))
 						t_insert(breakdown.CritChance, s_format("= %.2f%%", preLuckyCritChance))
 					end
-					if env.mode_effective and skillModList:Flag(cfg, "CritChanceLucky") then
+					if env.mode_effective and canRerollCritChance and skillModList:Flag(cfg, "CritChanceLucky") then
 						t_insert(breakdown.CritChance, "Crit Chance is Lucky:")
 						t_insert(breakdown.CritChance, s_format("1 - (1 - %.4f) x (1 - %.4f)", preLuckyCritChance / 100, preLuckyCritChance / 100))
 						t_insert(breakdown.CritChance, s_format("= %.2f%%", preBifurcateCritChance))
 					end
-					if env.mode_effective and skillModList:Flag(cfg, "BifurcateCrit") then
+					if env.mode_effective and canRerollCritChance and skillModList:Flag(cfg, "BifurcateCrit") then
 						t_insert(breakdown.CritChance, "Critical Strike Bifurcates:")
 						t_insert(breakdown.CritChance, s_format("1 - (1 - %.4f) x (1 - %.4f)", preBifurcateCritChance / 100, preBifurcateCritChance / 100))
 						t_insert(breakdown.CritChance, s_format("= %.2f%%", preInevitableCritChance))
@@ -3821,7 +3822,7 @@ function calcs.offence(env, actor, activeSkill)
 
 				output.PreEffectiveCritMultiplier = 1 + extraDamage
 				-- if crit bifurcates are enabled, roll for crit twice and add multiplier for each
-				if env.mode_effective and skillModList:Flag(cfg, "BifurcateCrit") and not inevitableCrits then
+				if env.mode_effective and canRerollCritChance and skillModList:Flag(cfg, "BifurcateCrit") and not inevitableCrits then
 					-- get crit chance and calculate odds of critting twice
 					local critChancePercentage = output.PreBifurcateCritChance
 					local bifurcateMultiChance = (critChancePercentage ^ 2) / 100

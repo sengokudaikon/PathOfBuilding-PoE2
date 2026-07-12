@@ -6998,8 +6998,7 @@ c["You take Fire Damage instead of Physical Damage from Bleeding Fire Damage als
 c["Your Aura Buffs do not affect Allies"]={{[1]={flags=0,keywordFlags=0,name="SelfAurasCannotAffectAllies",type="FLAG",value=true}},nil}
 c["Your Chills can Slow targets by up to a maximum of 35%"]={{[1]={flags=0,keywordFlags=0,name="ChillMax",type="OVERRIDE",value=35}},nil}
 c["Your Critical Damage Bonus is 250%"]={{[1]={flags=0,keywordFlags=0,name="CritMultiplier",type="OVERRIDE",value=250}},nil}
-c["Your Critical Hit Chance cannot be Rerolled"]={nil,"Your Critical Hit Chance cannot be Rerolled "}
-c["Your Critical Hit Chance cannot be Rerolled Your Critical Damage Bonus is 250%"]={{[1]={flags=0,keywordFlags=0,name="CritChance",type="OVERRIDE",value=250}},"Your  cannot be Rerolled Your Critical Damage Bonus "}
+c["Your Critical Hit Chance cannot be Rerolled"]={{[1]={flags=0,keywordFlags=0,name="CannotRerollCritChance",type="FLAG",value=true}},nil}
 c["Your Critical Hit Chance is Lucky"]={{[1]={flags=0,keywordFlags=0,name="CritChanceLucky",type="FLAG",value=true}},nil}
 c["Your Curses have 20% increased Magnitudes if 50% of Curse Duration expired"]={{[1]={[1]={actor="enemy",threshold=50,type="MultiplierThreshold",var="CurseExpired"},[2]={skillType=69,type="SkillType"},flags=0,keywordFlags=0,name="Magnitude",type="INC",value=20}},nil}
 c["Your Damage with Critical Hits is Lucky"]={{[1]={flags=0,keywordFlags=0,name="CritLucky",type="FLAG",value=true}},nil}

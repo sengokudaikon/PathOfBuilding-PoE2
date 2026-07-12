@@ -3762,6 +3762,7 @@ local specialModList = {
 		mod("AttributeRequirementsConvertedTo" .. attr:gsub("^%l", string.upper), "BASE", num),
 	} end,
 	-- Crit
+	["your critical hit chance cannot be rerolled"] = { flag("CannotRerollCritChance") },
 	["your critical hit chance is lucky"] = { flag("CritChanceLucky") },
 	["your critical hit chance is lucky while on low life"] = { flag("CritChanceLucky", { type = "Condition", var = "LowLife" }) },
 	["your critical hit chance is lucky while focus?sed"] = { flag("CritChanceLucky", { type = "Condition", var = "Focused" }) },

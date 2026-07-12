@@ -261,7 +261,7 @@ describe("TestAttacks", function()
 	end)
 
 	it("correctly calculates Garukhan's Resolve bifurcated critical hit damage", function()
-		local function setup(socketGroup)
+		local function setup(socketGroup, cannotRerollCritChance)
 			newBuild()
 			build.itemsTab:CreateDisplayItemFromRaw([[
 				New Item
@@ -283,6 +283,9 @@ describe("TestAttacks", function()
 				your critical damage bonus is 1000000%
 				+4000 to accuracy
 			]]
+			if cannotRerollCritChance then
+				build.configTab.input.customMods = build.configTab.input.customMods .. "\nyour critical hit chance cannot be rerolled"
+			end
 			build.configTab:BuildModList()
 			runCallback("OnFrame")
 			build.calcsTab:BuildOutput()
@@ -301,6 +304,11 @@ describe("TestAttacks", function()
 		assert.are.equals(75, garukhanOutput.CritChance)
 		assert.is_true(math.abs(1 / 3 - (garukhanOutput.CritBifurcates - 1)) < 0.000001)
 		assert.is_true(math.abs(10001 - garukhanOutput.AverageHit) < 0.01)
+
+		local noRerollOutput = setup("Quarterstaff Strike 1/0  1\nGarukhan's Resolve 1/0  1", true)
+		assert.are.equals(50, noRerollOutput.CritChance)
+		assert.is_nil(noRerollOutput.CritBifurcates)
+		assert.are.equals(5001, noRerollOutput.AverageHit)
 	end)
 
 	it("correctly adds damage with oracle forced outcome", function()
@@ -353,6 +361,18 @@ describe("TestAttacks", function()
 
 		local forcedExpectedAvgHit = averageHit * critMult
 		assert.are.equals(forcedExpectedAvgHit, build.calcsTab.mainOutput.MainHand.AverageHit)
+
+		build.configTab.input.customMods = build.configTab.input.customMods .. [[
+			your critical hit chance is lucky
+			your critical hit chance cannot be rerolled
+		]]
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		build.calcsTab:BuildOutput()
+		runCallback("OnFrame")
+
+		assert.are.equals(10, build.calcsTab.mainOutput.MainHand.CritChance)
+		assert.are.equals(averageHit * 1.1, build.calcsTab.mainOutput.MainHand.AverageHit)
 	end)
 
 	it("does not force critical hits when critical hit chance is zero", function()
